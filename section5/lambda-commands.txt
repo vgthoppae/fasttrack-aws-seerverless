@@ -1,0 +1,26 @@
+aws lambda delete-function \
+    --function-name address-builder
+
+aws iam create-role \
+  --role-name address-builder-lambda-role \
+  --assume-role-policy-document file://../lambda-assume-role.json
+
+aws iam attach-role-policy \
+  --role-name address-builder-lambda-role \
+  --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+aws lambda create-function \
+  --function-name address-builder \
+  --runtime java8 \
+  --role arn:aws:iam::698225460402:role/address-builder-lambda-role \
+  --handler com.bb.serverless.addressbuilder.LambdaHandler \
+  --environment Variables={CURRENT_ENV=DEV} \
+  --zip-file fileb://./target/address-builder-1.0-SNAPSHOT.jar
+
+aws lambda update-function-configuration \
+--function-name address-builder \
+--environment Variables={CURRENT_ENV=TEST}
+
+aws lambda update-function-code \
+--function-name address-builder \
+--zip-file fileb://./target/address-builder-1.0-SNAPSHOT.jar
