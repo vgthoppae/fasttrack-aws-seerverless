@@ -1,0 +1,116 @@
+---
+swagger: '2.0'
+info:
+  version: 0.0.1
+  title: Product Catalog API
+  description: A simple demonstration of REST API
+paths:
+  /:
+    get:
+      summary: Product Categories
+      description: |
+        Returns different Product Categories available
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ProductCategory'
+        500:
+          description: Server Error              
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:698225460402:function:prodcatalog/invocations"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws_proxy"
+
+  /{product_category_id}:
+    get:
+      summary: Products under a Category
+      description: |
+        Returns all products for the given category id
+      parameters:
+        - name: product_category_id
+          in: path
+          description: Product Category Id
+          required: true 
+          type: string       
+        - name: page_size
+          in: query
+          description: Size of the page to be returned
+          required: true
+          type: integer   
+        - name: page
+          in: query
+          description: Zero-based page index
+          required: true  
+          type: integer                              
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              product_category_id:
+                type: integer
+              total_pages:
+                type: integer
+              page:
+                type: integer
+              page_size:
+                type: integer
+                description: Size of the page to be returned  
+              product:   
+                type: array
+                items:
+                  $ref: '#/definitions/Product'
+        400:
+          description: Bad request 
+        404:
+          description: Record Not found
+        500:
+          description: Server Error
+          
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:698225460402:function:prodcatalog/invocations"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws_proxy"        
+
+definitions:
+  ProductCategory:
+    type: object
+    properties:
+      product_category_id:
+        type: integer
+        description: Identifies a Product Category
+      product_category_name:
+        type: string
+        description: A friendly name for the Product Category
+  Product:
+    type: object
+    properties:
+      product_id:
+        type: integer
+        description: Identifies a Product
+      product_name:
+        type: string
+        description: A friendly name for the Product   
+      price:
+        type: number
+        description: Price of the product
+      spec:
+        type: string
+        description: Specification details of the product
+
+
+

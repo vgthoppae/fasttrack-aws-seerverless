@@ -1,0 +1,35 @@
+aws lambda add-permission \
+    --function-name prodcatalog \
+    --statement-id apigateway_prodcatalog_100 \
+    --action lambda:InvokeFunction \
+    --principal apigateway.amazonaws.com \
+    --source-arn arn:aws:execute-api:us-east-1:698225460402:6czcct1900/*/*
+
+
+aws apigateway import-rest-api --body 'file://./prod-catalog-v2.yaml'
+
+aws apigateway get-rest-apis
+
+aws apigateway delete-rest-api --rest-api-id jcy0kz110c
+
+aws lambda update-function-code \
+           --function-name 'prodcatalog' \
+           --zip-file 'fileb://./prodcatalogv2-1.0-SNAPSHOT.jar'
+
+aws lambda update-function-code \
+           --function-name 'prodcatalog' \
+           --zip-file 'fileb://./prodcatalogv2-1.0-SNAPSHOT.jar'           
+
+aws lambda update-function-configuration \
+           --function-name 'prodcatalog' \
+           --handler com.bb.serverless.prodcatalogv2.ApiGatewayLambdaHandler
+
+aws apigateway get-rest-apis --query "items[?name=='Product Catalog API']"
+
+aws apigateway get-rest-apis --query "items[?name=='Product Catalog API'].[id]"
+
+aws apigateway get-rest-apis --query "items[?name=='Product Catalog API'].[id, name]"
+
+aws apigateway put-rest-api --rest-api-id 6czcct1900 --body 'file://./prod-catalog-v2.yaml'
+
+aws apigateway create-deployment --rest-api-id 6czcct1900 --stage-name dev
