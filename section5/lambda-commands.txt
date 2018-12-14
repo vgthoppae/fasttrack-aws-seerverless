@@ -12,7 +12,7 @@ aws iam attach-role-policy \
 aws lambda create-function \
   --function-name address-builder \
   --runtime java8 \
-  --role arn:aws:iam::698225460402:role/address-builder-lambda-role \
+  --role arn:aws:iam::xxxxxxxx:role/address-builder-lambda-role \
   --handler com.bb.serverless.addressbuilder.LambdaHandler \
   --environment Variables={CURRENT_ENV=DEV} \
   --zip-file fileb://./target/address-builder-1.0-SNAPSHOT.jar
